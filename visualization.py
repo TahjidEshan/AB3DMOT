@@ -96,13 +96,13 @@ def show_lidar_with_boxes(
             if obj.type == "DontCare":
                 continue
             # Draw 3d bounding box
-            box3d_pts_2d, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
+            box3d_pts_2d, box3d_pts_3d = compute_box_3d(obj, calib.P)
             box3d_pts_3d_velo = calib.project_rect_to_velo(box3d_pts_3d)
             print("box3d_pts_3d_velo:")
             print(box3d_pts_3d_velo)
             draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=color)
             # Draw heading arrow
-            ori3d_pts_2d, ori3d_pts_3d = utils.compute_orientation_3d(obj, calib.P)
+            ori3d_pts_2d, ori3d_pts_3d = compute_orientation_3d(obj, calib.P)
             ori3d_pts_3d_velo = calib.project_rect_to_velo(ori3d_pts_3d)
             x1, y1, z1 = ori3d_pts_3d_velo[0, :]
             x2, y2, z2 = ori3d_pts_3d_velo[1, :]
@@ -117,7 +117,11 @@ def show_lidar_with_boxes(
             )
     mlab.show(1)
 def vis(result_sha, data_root, result_root):
-    def show_image_with_boxes(img,velo, objects_res, objects_res_det,objects_res_raw, labeldata,  object_gt, calib, save_path, height_threshold=0):
+    def show_image_with_boxes(img,velo, objects_res, 
+    objects_res_det,objects_res_raw, labeldata,  object_gt, 
+    calib, save_path, 
+    height_threshold=0, 
+    show_lidar = False, save_image = False):
         img2 = np.copy(img)
 
         for obj in objects_res:
@@ -157,12 +161,16 @@ def vis(result_sha, data_root, result_root):
         #     if box3d_pts_2d is not None:
         #         img2 = cv2.putText(img2, text, (int(box3d_pts_2d[2, 0]), int(
         #             box3d_pts_2d[2, 1]) - 8), cv2.FONT_HERSHEY_TRIPLEX, 0.5, color=(255,0,0))
-        show_lidar_with_boxes(velo, labeldata, calib, objects_pred=objects_res)
+        if show_lidar:
+            show_lidar_with_boxes(velo, labeldata, calib, objects_pred=objects_res)
         img = Image.fromarray(img2)
         img = img.resize((width, height))
-        #cv2.imshow("Image", img)
+        # cv2.imshow("Image", img2)
         print("Saving Image at", save_path)
-        # img.save(save_path)
+        if save_image:
+            img.save(save_path)
+
+        return img2
 
     for seq in seq_list:
         image_dir = os.path.join(data_root, 'image_02/%s' % seq)
@@ -191,6 +199,9 @@ def vis(result_sha, data_root, result_root):
         # for val in finallabelset:
         #     filecontent = filecontent[filecontent[:,2]!=val,:]
         # print(np.unique(filecontent[:,2]))
+        size = (width, height)
+        out = cv2.VideoWriter(f'{result_root}/{seq}.avi',cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
+        
         for count in range(start_count, num_images):
             image_tmp = images_list[count]
             velo_tmp = velo_list[count]
@@ -202,25 +213,7 @@ def vis(result_sha, data_root, result_root):
             img_height, img_width, img_channel = image_tmp.shape
             filecontentframe =  filecontent[filecontent[:,0] == str(image_index),:]
             print(f"Labels for frame {image_index}",np.unique(filecontentframe[:,2]))
-            labeldata = (Object3d(getstringfromarray(line[2:])) for line in filecontentframe)
-            # result_tmp = os.path.join(
-            #     result_dir, '%06d.txt' % image_index)		# load the result
-            # if not is_path_exists(result_tmp):
-            #     object_res = []
-            # else:
-            #     object_res = read_label(result_tmp)
-            # result_tmp_det = os.path.join(
-            #     result_dir, 'det%06d.txt' % image_index)		# load the result
-            # if not is_path_exists(result_tmp_det):
-            #     object_res_det = []
-            # else:
-            #     object_res_det = read_label(result_tmp_det)      
-            # result_tmp_raw = os.path.join(
-            #     result_dir, 'raw%06d.txt' % image_index)		# load the result
-            # if not is_path_exists(result_tmp_raw):
-            #     object_res_raw = []
-            # else:
-            #     object_res_raw = read_label(result_tmp_raw)          
+            labeldata = (Object3d(getstringfromarray(line[2:])) for line in filecontentframe)     
             object_res = []
             object_res_det = []
             object_res_raw = []
@@ -272,10 +265,12 @@ def vis(result_sha, data_root, result_root):
             save_image_with_3dbbox_gt_path = os.path.join(
                 save_3d_bbox_dir, '%06d.jpg' % (image_index))
             velodyne_scan = load_velo_scan(velo_tmp, np.float32, n_vec=4)[:,0:4]
-            show_image_with_boxes(image_tmp, velodyne_scan, object_res_filtered, object_res_filtered_det,object_res_filtered_raw,labeldata, [
+            img = show_image_with_boxes(image_tmp, velodyne_scan, object_res_filtered, object_res_filtered_det,object_res_filtered_raw,labeldata, [
             ], calib_tmp, save_path=save_image_with_3dbbox_gt_path)
             print('number of objects to plot is %d, %d, %d' % (num_instances, len(object_res_filtered_det), len(object_res_filtered_raw)))
             count += 1
+            out.write(img)
+        out.release()
 
 
 if __name__ == "__main__":
@@ -283,13 +278,13 @@ if __name__ == "__main__":
         print("Usage: python visualization.py result_sha(e.g., car_3d_det_test)")
         sys.exit(1)
 
-    result_root = '/content/gdrive/My Drive/Colab Notebooks/AB3DMOT/results'
+    result_root = '/home/tahjid//AB3DMOT/results'
     result_sha = sys.argv[1]
     results = ["car_3d_det_val", "ped_3d_det_val", "cyc_3d_det_val"]
     if 'val' in result_sha:
-        data_root = '/content/gdrive/My Drive/Dataset/KITTI/kitti_tracking/training'
+        data_root = '/mnt/hdd1/lxc-hdd1/tahjid/KITTI_MOT/kitti_tracking/training'
     elif 'test' in result_sha:
-        data_root = '/content/gdrive/My Drive/Dataset/KITTI/kitti_tracking/testing'
+        data_root = '/mnt/hdd1/lxc-hdd1/tahjid/KITTI_MOT/kitti_tracking/testing'
     else:
         print("wrong split!")
         sys.exit(1)

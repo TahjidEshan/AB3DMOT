@@ -160,7 +160,7 @@ def load_list_from_folder(folder_path, ext_filter=None, depth=1, recursive=False
     folder_path = safe_path(folder_path)
     if debug: assert isfolder(folder_path), 'input folder path is not correct: %s' % folder_path
     if not is_path_exists(folder_path):
-        print('the input folder does not exist\n')
+        print(f'the input folder does not exist at {folder_path}\n')
         return [], 0
     if debug:
         assert islogical(recursive), 'recursive should be a logical variable: {}'.format(recursive)

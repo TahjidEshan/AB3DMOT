@@ -444,11 +444,11 @@ if __name__ == '__main__':
         sys.exit(1)
 
     result_sha = sys.argv[1]
-    save_root = '/content/gdrive/My Drive/Colab Notebooks/AB3DMOT/results'
+    save_root = '/home/tahjid/AB3DMOT/results'
 
     det_id2str = {1: 'Pedestrian', 2: 'Car', 3: 'Cyclist'}
     seq_file_list, num_seq = load_list_from_folder(os.path.join(
-        '/content/gdrive/My Drive/Colab Notebooks/AB3DMOT/data/KITTI', result_sha))
+        '/home/tahjid/AB3DMOT/data/KITTI', result_sha))
     total_time = 0.0
     total_frames = 0
     save_dir = os.path.join(save_root, result_sha)
