@@ -55,7 +55,10 @@ def show_lidar_with_boxes(
     # pc_velo=pc_velo[:,0:3]
 
     color = (0, 1, 0)
+    if objects is None:
+        print("No Labels")
     for obj in objects:
+        print("here in lidar")
         if obj.type == "DontCare":
             continue
         # Draw 3d bounding box
@@ -102,11 +105,13 @@ def show_lidar_with_boxes(
             if obj.type == "DontCare":
                 continue
             # Draw 3d bounding box
+
+			
             box3d_pts_2d, box3d_pts_3d = compute_box_3d(obj, calib.P)
             box3d_pts_3d_velo = calib.project_rect_to_velo(box3d_pts_3d)
             print("box3d_pts_3d_velo:")
             print(box3d_pts_3d_velo)
-            draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=color)
+            draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=color, label=obj.type)
             # Draw heading arrow
             ori3d_pts_2d, ori3d_pts_3d = compute_orientation_3d(obj, calib.P)
             ori3d_pts_3d_velo = calib.project_rect_to_velo(ori3d_pts_3d)
@@ -150,6 +155,8 @@ def vis(result_sha, data_root, result_root):
             if box3d_pts_2d is not None:
                 img2 = cv2.putText(img2, text, (int(box3d_pts_2d[3, 0]), int(
                     box3d_pts_2d[3, 1]) - 8), cv2.FONT_HERSHEY_TRIPLEX, 0.5, color=(0, 255, 0))
+        import itertools
+        labeldata, labeldata2 = itertools.tee(labeldata)
         for obj in labeldata:
             # print("here")
             box3d_pts_2d, _ = compute_box_3d(obj, calib.P)
@@ -170,7 +177,7 @@ def vis(result_sha, data_root, result_root):
         #         img2 = cv2.putText(img2, text, (int(box3d_pts_2d[2, 0]), int(
         #             box3d_pts_2d[2, 1]) - 8), cv2.FONT_HERSHEY_TRIPLEX, 0.5, color=(255,0,0))
         if show_lidar:
-            show_lidar_with_boxes(velo, labeldata, calib,
+            show_lidar_with_boxes(velo, objects = labeldata2, calib=calib,
                                   objects_pred=objects_res)
         img = Image.fromarray(img2)
         img = img.resize((width, height))
@@ -225,6 +232,7 @@ def vis(result_sha, data_root, result_root):
             img_height, img_width, img_channel = image_tmp.shape
             filecontentframe = filecontent[filecontent[:, 0] == str(
                 image_index), :]
+            print(len(filecontentframe))
             print(f"Labels for frame {image_index}",
                   np.unique(filecontentframe[:, 2]))
             labeldata = (Object3d(getstringfromarray(
