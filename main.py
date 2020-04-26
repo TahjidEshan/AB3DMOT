@@ -1,7 +1,3 @@
-# Author: Xinshuo Weng
-# email: xinshuo.weng@gmail.com
-# partially borrowed from SORT
-
 from __future__ import print_function
 import sys
 import time
@@ -170,53 +166,53 @@ class KalmanBoxTracker(object):
         Initialises a tracker using initial bounding box.
         """
         # define constant velocity model
-        self.kf = KalmanFilter(dim_x=10, dim_z=7)
-        self.kf.F = np.array([[1, 0, 0, 0, 0, 0, 0, 1, 0, 0],      # state transition matrix
-                              [0, 1, 0, 0, 0, 0, 0, 0, 1, 0],
-                              [0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                              [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-                              [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                              [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-                              [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-                              [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-                              [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-                              [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]])
+        # self.kf = KalmanFilter(dim_x=10, dim_z=7)
+        # self.kf.F = np.array([[1, 0, 0, 0, 0, 0, 0, 1, 0, 0],      # state transition matrix
+        #                       [0, 1, 0, 0, 0, 0, 0, 0, 1, 0],
+        #                       [0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+        #                       [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+        #                       [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        #                       [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+        #                       [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+        #                       [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+        #                       [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+        #                       [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]])
 
-        self.kf.H = np.array([[1, 0, 0, 0, 0, 0, 0, 0, 0, 0],      # measurement function,
-                              [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-                              [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                              [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-                              [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                              [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-                              [0, 0, 0, 0, 0, 0, 1, 0, 0, 0]])
+        # self.kf.H = np.array([[1, 0, 0, 0, 0, 0, 0, 0, 0, 0],      # measurement function,
+        #                       [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+        #                       [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+        #                       [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+        #                       [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        #                       [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+        #                       [0, 0, 0, 0, 0, 0, 1, 0, 0, 0]])
 
         # with angular velocity
-        # self.kf = KalmanFilter(dim_x=11, dim_z=7)
-        # self.kf.F = np.array([[1,0,0,0,0,0,0,1,0,0,0],      # state transition matrix
-        #                       [0,1,0,0,0,0,0,0,1,0,0],
-        #                       [0,0,1,0,0,0,0,0,0,1,0],
-        #                       [0,0,0,1,0,0,0,0,0,0,1],
-        #                       [0,0,0,0,1,0,0,0,0,0,0],
-        #                       [0,0,0,0,0,1,0,0,0,0,0],
-        #                       [0,0,0,0,0,0,1,0,0,0,0],
-        #                       [0,0,0,0,0,0,0,1,0,0,0],
-        #                       [0,0,0,0,0,0,0,0,1,0,0],
-        #                       [0,0,0,0,0,0,0,0,0,1,0],
-        #                       [0,0,0,0,0,0,0,0,0,0,1]])
+        self.kf = KalmanFilter(dim_x=11, dim_z=7)
+        self.kf.F = np.array([[1,0,0,0,0,0,0,1,0,0,0],      # state transition matrix
+                              [0,1,0,0,0,0,0,0,1,0,0],
+                              [0,0,1,0,0,0,0,0,0,1,0],
+                              [0,0,0,1,0,0,0,0,0,0,1],
+                              [0,0,0,0,1,0,0,0,0,0,0],
+                              [0,0,0,0,0,1,0,0,0,0,0],
+                              [0,0,0,0,0,0,1,0,0,0,0],
+                              [0,0,0,0,0,0,0,1,0,0,0],
+                              [0,0,0,0,0,0,0,0,1,0,0],
+                              [0,0,0,0,0,0,0,0,0,1,0],
+                              [0,0,0,0,0,0,0,0,0,0,1]])
 
-        # self.kf.H = np.array([[1,0,0,0,0,0,0,0,0,0,0],      # measurement function,
-        #                       [0,1,0,0,0,0,0,0,0,0,0],
-        #                       [0,0,1,0,0,0,0,0,0,0,0],
-        #                       [0,0,0,1,0,0,0,0,0,0,0],
-        #                       [0,0,0,0,1,0,0,0,0,0,0],
-        #                       [0,0,0,0,0,1,0,0,0,0,0],
-        #                       [0,0,0,0,0,0,1,0,0,0,0]])
+        self.kf.H = np.array([[1,0,0,0,0,0,0,0,0,0,0],      # measurement function,
+                              [0,1,0,0,0,0,0,0,0,0,0],
+                              [0,0,1,0,0,0,0,0,0,0,0],
+                              [0,0,0,1,0,0,0,0,0,0,0],
+                              [0,0,0,0,1,0,0,0,0,0,0],
+                              [0,0,0,0,0,1,0,0,0,0,0],
+                              [0,0,0,0,0,0,1,0,0,0,0]])
 
-        # self.kf.R[0:,0:] *= 10.   # measurement uncertainty
+        self.kf.R[0:,0:] *= 10.   # measurement uncertainty
         self.kf.P[7:, 7:] *= 1000.  # state uncertainty, give high uncertainty to the unobservable initial velocities, covariance matrix
         self.kf.P *= 10.
 
-        # self.kf.Q[-1,-1] *= 0.01    # process uncertainty
+        self.kf.Q[-1,-1] *= 0.01    # process uncertainty
         self.kf.Q[7:, 7:] *= 0.01
         self.kf.x[:7] = bbox3D.reshape((7, 1))
 
@@ -444,11 +440,11 @@ if __name__ == '__main__':
         sys.exit(1)
 
     result_sha = sys.argv[1]
-    save_root = '/home/tahjid/AB3DMOT/results'
+    save_root = '/home/eshan/AB3DMOT/results'
 
     det_id2str = {1: 'Pedestrian', 2: 'Car', 3: 'Cyclist'}
     seq_file_list, num_seq = load_list_from_folder(os.path.join(
-        '/home/tahjid/AB3DMOT/data/KITTI', result_sha))
+        '/home/eshan/AB3DMOT/data/KITTI', result_sha))
     total_time = 0.0
     total_frames = 0
     save_dir = os.path.join(save_root, result_sha)
@@ -488,11 +484,11 @@ if __name__ == '__main__':
             count = 0
             for d in trackers:
                 bbox3d_tmp = d[0:7]
-                if count< len(trackers) and count<len(dets):
-                  bbox3d_tmp_det = dets[count]
-                  if count< len(trks):
-                    bbox3d_tmp_raw = trks[count]
-                  
+                if count < len(trackers) and count < len(dets):
+                    bbox3d_tmp_det = dets[count]
+                    if count < len(trks):
+                        bbox3d_tmp_raw = trks[count]
+
                 id_tmp = d[7]
                 ori_tmp = d[8]
                 type_tmp = det_id2str[d[9]]
@@ -507,23 +503,23 @@ if __name__ == '__main__':
                                                                                          conf_tmp, id_tmp)
                 save_trk_file.write(str_to_srite)
 
-                if count< len(trackers) and count<len(dets):
-                  str_to_write = '%s -1 -1 %f %f %f %f %f %f %f %f %f %f %f %f %f %d\n' % (type_tmp, ori_tmp,
-                                                                                          bbox2d_tmp_trk[0], bbox2d_tmp_trk[
-                                                                                              1], bbox2d_tmp_trk[2], bbox2d_tmp_trk[3],
-                                                                                          bbox3d_tmp_det[0], bbox3d_tmp_det[1], bbox3d_tmp_det[2], bbox3d_tmp_det[
-                                                                                              3], bbox3d_tmp_det[4], bbox3d_tmp_det[5], bbox3d_tmp_det[6],
-                                                                                          conf_tmp, id_tmp)
-                  save_det_file.write(str_to_write)
-                  if count<len(trks):
+                if count < len(trackers) and count < len(dets):
                     str_to_write = '%s -1 -1 %f %f %f %f %f %f %f %f %f %f %f %f %f %d\n' % (type_tmp, ori_tmp,
-                                                                                          bbox2d_tmp_trk[0], bbox2d_tmp_trk[
-                                                                                              1], bbox2d_tmp_trk[2], bbox2d_tmp_trk[3],
-                                                                                          bbox3d_tmp_raw[0], bbox3d_tmp_raw[1], bbox3d_tmp_raw[2], bbox3d_tmp_raw[
-                                                                                              3], bbox3d_tmp_raw[4], bbox3d_tmp_raw[5], bbox3d_tmp_raw[6],
-                                                                                          conf_tmp, id_tmp)
-                    save_raw_file.write(str_to_write)
-                  count = count+1
+                                                                                             bbox2d_tmp_trk[0], bbox2d_tmp_trk[
+                                                                                                 1], bbox2d_tmp_trk[2], bbox2d_tmp_trk[3],
+                                                                                             bbox3d_tmp_det[0], bbox3d_tmp_det[1], bbox3d_tmp_det[2], bbox3d_tmp_det[
+                                                                                                 3], bbox3d_tmp_det[4], bbox3d_tmp_det[5], bbox3d_tmp_det[6],
+                                                                                             conf_tmp, id_tmp)
+                    save_det_file.write(str_to_write)
+                    if count < len(trks):
+                        str_to_write = '%s -1 -1 %f %f %f %f %f %f %f %f %f %f %f %f %f %d\n' % (type_tmp, ori_tmp,
+                                                                                                 bbox2d_tmp_trk[0], bbox2d_tmp_trk[
+                                                                                                     1], bbox2d_tmp_trk[2], bbox2d_tmp_trk[3],
+                                                                                                 bbox3d_tmp_raw[0], bbox3d_tmp_raw[1], bbox3d_tmp_raw[2], bbox3d_tmp_raw[
+                                                                                                     3], bbox3d_tmp_raw[4], bbox3d_tmp_raw[5], bbox3d_tmp_raw[6],
+                                                                                                 conf_tmp, id_tmp)
+                        save_raw_file.write(str_to_write)
+                    count = count+1
 
                 str_to_srite = '%d %d %s 0 0 %f %f %f %f %f %f %f %f %f %f %f %f %f\n' % (frame, id_tmp,
                                                                                           type_tmp, ori_tmp, bbox2d_tmp_trk[0], bbox2d_tmp_trk[

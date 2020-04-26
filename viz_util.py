@@ -1,11 +1,3 @@
-""" Visualization code for point clouds and 3D bounding boxes with mayavi.
-
-Modified by Charles R. Qi 
-Date: September 2017
-
-Ref: https://github.com/hengck23/didi-udacity-2017/blob/master/baseline-04/kitti_data/draw.py
-"""
-
 import numpy as np
 import mayavi.mlab as mlab
 
@@ -64,9 +56,12 @@ def rotation_matrix_numpy(axis, theta):
 
     return np.array(
         [
-            [a * a + b * b - c * c - d * d, 2 * (b * c - a * d), 2 * (b * d + a * c)],
-            [2 * (b * c + a * d), a * a + c * c - b * b - d * d, 2 * (c * d - a * b)],
-            [2 * (b * d - a * c), 2 * (c * d + a * b), a * a + d * d - b * b - c * c],
+            [a * a + b * b - c * c - d * d, 2 *
+                (b * c - a * d), 2 * (b * d + a * c)],
+            [2 * (b * c + a * d), a * a + c * c -
+             b * b - d * d, 2 * (c * d - a * b)],
+            [2 * (b * d - a * c), 2 * (c * d + a * b),
+             a * a + d * d - b * b - c * c],
         ]
     )
 
