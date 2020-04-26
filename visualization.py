@@ -23,7 +23,7 @@ def getstringfromarray(line):
     return l.strip()
 
 
-def show_lidar_with_boxes(fig,
+def show_lidar_with_boxes(
     pc_velo,
     objects,
     calib,
@@ -41,6 +41,9 @@ def show_lidar_with_boxes(fig,
     from viz_util import draw_lidar_simple, draw_lidar, draw_gt_boxes3d
 
     print(("All point num: ", pc_velo.shape[0]))
+    fig = mlab.figure(
+        figure=None, bgcolor=(0, 0, 0), fgcolor=None, engine=None, size=(1000, 500)
+    )
 
     if img_fov:
         pc_velo = get_lidar_in_image_fov(
@@ -122,11 +125,11 @@ def show_lidar_with_boxes(fig,
 
 
 def vis(result_sha, data_root, result_root):
-    def show_image_with_boxes(img, velo,fig, objects_res,
+    def show_image_with_boxes(img, velo, objects_res,
                               objects_res_det, objects_res_raw, labeldata,  object_gt,
                               calib, save_path,
                               height_threshold=0,
-                              show_lidar=True, save_image=True):
+                              show_lidar=True, save_image=False):
         img2 = np.copy(img)
 
         for obj in objects_res:
@@ -167,13 +170,15 @@ def vis(result_sha, data_root, result_root):
         #         img2 = cv2.putText(img2, text, (int(box3d_pts_2d[2, 0]), int(
         #             box3d_pts_2d[2, 1]) - 8), cv2.FONT_HERSHEY_TRIPLEX, 0.5, color=(255,0,0))
         if show_lidar:
-            show_lidar_with_boxes(fig,velo, labeldata, calib,
+            show_lidar_with_boxes(velo, labeldata, calib,
                                   objects_pred=objects_res)
         img = Image.fromarray(img2)
         img = img.resize((width, height))
         cv2.imshow("Image", img2)
-        print("Saving Image at", save_path)
+        cv2.waitKey()
+
         if save_image:
+            print("Saving Image at", save_path)
             img.save(save_path)
 
         return img2
@@ -208,9 +213,7 @@ def vis(result_sha, data_root, result_root):
         size = (width, height)
         out = cv2.VideoWriter(f'{result_root}/{seq}.avi',
                               cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
-        fig = mlab.figure(
-        figure=None, bgcolor=(0, 0, 0), fgcolor=None, engine=None, size=(1000, 500)
-        )
+        num_images = 1
         for count in range(start_count, num_images):
             image_tmp = images_list[count]
             velo_tmp = velo_list[count]
@@ -280,7 +283,7 @@ def vis(result_sha, data_root, result_root):
                 save_3d_bbox_dir, '%06d.jpg' % (image_index))
             velodyne_scan = load_velo_scan(
                 velo_tmp, np.float32, n_vec=4)[:, 0:4]
-            img = show_image_with_boxes(image_tmp, velodyne_scan, fig, object_res_filtered, object_res_filtered_det, object_res_filtered_raw, labeldata, [
+            img = show_image_with_boxes(image_tmp, velodyne_scan, object_res_filtered, object_res_filtered_det, object_res_filtered_raw, labeldata, [
             ], calib_tmp, save_path=save_image_with_3dbbox_gt_path)
             print('number of objects to plot is %d, %d, %d' % (
                 num_instances, len(object_res_filtered_det), len(object_res_filtered_raw)))
